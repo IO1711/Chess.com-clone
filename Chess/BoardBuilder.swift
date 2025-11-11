@@ -9,6 +9,7 @@ import Foundation
 import SpriteKit
 
 class BoardBuilder {
+    //I made a change
     /*private let cols = 8
     private let rows = 8
     private var tileSize: CGFloat = 0
