@@ -463,9 +463,14 @@ class BoardNode: SKNode{
             }
         }
         
+        //check for bishop, pawn, king and queen
+        
         //top-right
         while i < 8 && j < 8 {
-            if isOccupied(col: j, row: i) && isEnemy(pieceName: pieceName, col: j, row: i){
+            if isOccupied(col: j, row: i){
+                if !isEnemy(pieceName: pieceName, col: j, row: i){
+                    break
+                } else {
                 let square = Square(col: j, row: i)
                 let enemyPiece = occupancy[square]
                 
@@ -492,6 +497,8 @@ class BoardNode: SKNode{
                         return false
                     }
                 }
+                break
+            }
             }
             i+=1
             j+=1
@@ -504,7 +511,10 @@ class BoardNode: SKNode{
         
         //bottom-left
         while i >= 0 && j >= 0 {
-            if isOccupied(col: j, row: i) && isEnemy(pieceName: pieceName, col: j, row: i){
+            if isOccupied(col: j, row: i){
+                if !isEnemy(pieceName: pieceName, col: j, row: i){
+                    break
+                } else {
                 let square = Square(col: j, row: i)
                 let enemyPiece = occupancy[square]
                 
@@ -533,6 +543,8 @@ class BoardNode: SKNode{
                         return false
                     }
                 }
+                break
+            }
             }
             
             i-=1
@@ -546,7 +558,10 @@ class BoardNode: SKNode{
         
         //bottom-right
         while i >= 0 && j < 8 {
-            if isOccupied(col: j, row: i) && isEnemy(pieceName: pieceName, col: j, row: i){
+            if isOccupied(col: j, row: i){
+                if !isEnemy(pieceName: pieceName, col: j, row: i){
+                    break
+                } else {
                 let square = Square(col: j, row: i)
                 let enemyPiece = occupancy[square]
                 
@@ -575,6 +590,8 @@ class BoardNode: SKNode{
                         return false
                     }
                 }
+                break
+            }
             }
             
             i-=1
@@ -588,7 +605,10 @@ class BoardNode: SKNode{
         
         //top-left
         while i < 8 && j >= 0 {
-            if isOccupied(col: j, row: i) && isEnemy(pieceName: pieceName, col: j, row: i){
+            if isOccupied(col: j, row: i){
+                if !isEnemy(pieceName: pieceName, col: j, row: i){
+                    break
+                } else {
                 let square = Square(col: j, row: i)
                 let enemyPiece = occupancy[square]
                 
@@ -617,6 +637,8 @@ class BoardNode: SKNode{
                         return false
                     }
                 }
+                break
+            }
             }
             
             i+=1
@@ -625,7 +647,7 @@ class BoardNode: SKNode{
         }
         
         
-        //check for rook and wueen
+        //check for rook, king and queen
         
         
         i=row+1
@@ -634,7 +656,10 @@ class BoardNode: SKNode{
         
         //top
         while i < 8 {
-            if isOccupied(col: j, row: i) && isEnemy(pieceName: pieceName, col: j, row: i){
+            if isOccupied(col: j, row: i){
+                if !isEnemy(pieceName: pieceName, col: j, row: i){
+                    break
+                } else {
                 let square = Square(col: j, row: i)
                 let enemyPiece = occupancy[square]
                 
@@ -655,6 +680,8 @@ class BoardNode: SKNode{
                         return false
                     }
                 }
+                break
+            }
             }
             
             i+=1
@@ -667,7 +694,10 @@ class BoardNode: SKNode{
         
         //bottom
         while i >= 0{
-            if isOccupied(col: j, row: i) && isEnemy(pieceName: pieceName, col: j, row: i){
+            if isOccupied(col: j, row: i){
+                if !isEnemy(pieceName: pieceName, col: j, row: i){
+                    break
+                } else {
                 let square = Square(col: j, row: i)
                 let enemyPiece = occupancy[square]
                 
@@ -688,6 +718,8 @@ class BoardNode: SKNode{
                         return false
                     }
                 }
+                break
+            }
             }
             
             i-=1
@@ -700,7 +732,10 @@ class BoardNode: SKNode{
         
         //right
         while j < 8 {
-            if isOccupied(col: j, row: i) && isEnemy(pieceName: pieceName, col: j, row: i){
+            if isOccupied(col: j, row: i){
+                if !isEnemy(pieceName: pieceName, col: j, row: i){
+                    break
+                } else {
                 let square = Square(col: j, row: i)
                 let enemyPiece = occupancy[square]
                 
@@ -721,6 +756,8 @@ class BoardNode: SKNode{
                         return false
                     }
                 }
+                break
+            }
             }
             
             j+=1
@@ -733,7 +770,10 @@ class BoardNode: SKNode{
         
         //left
         while j >= 0 {
-            if isOccupied(col: j, row: i) && isEnemy(pieceName: pieceName, col: j, row: i){
+            if isOccupied(col: j, row: i){
+                if !isEnemy(pieceName: pieceName, col: j, row: i){
+                    break
+                } else {
                 let square = Square(col: j, row: i)
                 let enemyPiece = occupancy[square]
                 
@@ -754,10 +794,175 @@ class BoardNode: SKNode{
                         return false
                     }
                 }
+                break
+            }
             }
             
             j-=1
             isFirstTime = false
+        }
+        
+        //check for knights
+        
+        i=row+1
+        j=col+2
+        
+        if row < 7 && col < 6 {
+            if isOccupied(col: j, row: i) && isEnemy(pieceName: pieceName, col: j, row: i){
+                let square = Square(col: j, row: i)
+                let enemyPiece = occupancy[square]
+                
+                if isWhiteKing {
+                    if enemyPiece?.type == .black_knight {
+                        return false
+                    }
+                } else {
+                    if enemyPiece?.type == .white_knight {
+                        return false
+                    }
+                }
+            }
+            
+        }
+        
+        i=row+1
+        j=col-2
+        
+        if row < 7 && col > 1 {
+            if isOccupied(col: j, row: i) && isEnemy(pieceName: pieceName, col: j, row: i){
+                let square = Square(col: j, row: i)
+                let enemyPiece = occupancy[square]
+                
+                if isWhiteKing {
+                    if enemyPiece?.type == .black_knight {
+                        return false
+                    }
+                } else {
+                    if enemyPiece?.type == .white_knight {
+                        return false
+                    }
+                }
+            }
+        }
+        
+        i=row-1
+        j=col-2
+        
+        if row > 0 && col > 1 {
+            if isOccupied(col: j, row: i) && isEnemy(pieceName: pieceName, col: j, row: i){
+                let square = Square(col: j, row: i)
+                let enemyPiece = occupancy[square]
+                
+                if isWhiteKing {
+                    if enemyPiece?.type == .black_knight {
+                        return false
+                    }
+                } else {
+                    if enemyPiece?.type == .white_knight {
+                        return false
+                    }
+                }
+            }
+        }
+        
+        i=row-1
+        j=col+2
+        
+        if row > 0 && col < 6 {
+            if isOccupied(col: j, row: i) && isEnemy(pieceName: pieceName, col: j, row: i){
+                let square = Square(col: j, row: i)
+                let enemyPiece = occupancy[square]
+                
+                if isWhiteKing {
+                    if enemyPiece?.type == .black_knight {
+                        return false
+                    }
+                } else {
+                    if enemyPiece?.type == .white_knight {
+                        return false
+                    }
+                }
+            }
+        }
+        
+        i=row+2
+        j=col+1
+        
+        if row < 6 && col < 7 {
+            if isOccupied(col: j, row: i) && isEnemy(pieceName: pieceName, col: j, row: i){
+                let square = Square(col: j, row: i)
+                let enemyPiece = occupancy[square]
+                
+                if isWhiteKing {
+                    if enemyPiece?.type == .black_knight {
+                        return false
+                    }
+                } else {
+                    if enemyPiece?.type == .white_knight {
+                        return false
+                    }
+                }
+            }
+        }
+        
+        i=row+2
+        j=col-1
+        
+        if row < 6 && col > 0 {
+            if isOccupied(col: col-1, row: row+2) && isEnemy(pieceName: pieceName, col: col-1, row: row+2){
+                let square = Square(col: j, row: i)
+                let enemyPiece = occupancy[square]
+                
+                if isWhiteKing {
+                    if enemyPiece?.type == .black_knight {
+                        return false
+                    }
+                } else {
+                    if enemyPiece?.type == .white_knight {
+                        return false
+                    }
+                }
+            }
+        }
+        
+        i=row-2
+        j=col-1
+        
+        if row > 1 && col > 0 {
+            if isOccupied(col: col-1, row: row-2) && isEnemy(pieceName: pieceName, col: col-1, row: row-2){
+                let square = Square(col: j, row: i)
+                let enemyPiece = occupancy[square]
+                
+                if isWhiteKing {
+                    if enemyPiece?.type == .black_knight {
+                        return false
+                    }
+                } else {
+                    if enemyPiece?.type == .white_knight {
+                        return false
+                    }
+                }
+            }
+        }
+        
+        i=row-2
+        j=col+1
+        
+        if row > 1 && col < 7 {
+            if isOccupied(col: col+1, row: row-2) && isEnemy(pieceName: pieceName, col: col+1, row: row-2){
+                let square = Square(col: j, row: i)
+                let enemyPiece = occupancy[square]
+                
+                if isWhiteKing {
+                    if enemyPiece?.type == .black_knight {
+                        return false
+                    }
+                } else {
+                    if enemyPiece?.type == .white_knight {
+                        return false
+                    }
+                }
+            }
         }
         
         return true
