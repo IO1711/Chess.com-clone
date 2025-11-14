@@ -25,6 +25,27 @@ enum Player{
 
 private struct Square: Hashable { let col: Int; let row: Int }
 
+private struct Move {
+    let player: Player
+    let from: Square
+    let to: Square
+    
+    let movedPiece: PieceNode
+    let capturedPiece: PieceTypes?
+}
+
+extension PieceTypes {
+    var owner: Player {
+        switch self {
+        case .white_king, .white_pawn, .white_rook, .white_queen, .white_bishop, .white_knight:
+            return .white
+        case .black_king, .black_pawn, .black_rook, .black_queen, .black_bishop, .black_knight:
+            return .black
+        }
+    }
+}
+
+
 
 class BoardNode: SKNode{
     
@@ -48,6 +69,12 @@ class BoardNode: SKNode{
     private var legalTargets = Set<Square>()
 
     private var occupancy = [Square: PieceNode]()
+    
+    private var moveHistory: [Move] = []
+    
+    private var currentPlayer: Player {
+        return (moveHistory.count % 2==0) ? .white : .black
+    }
     
     init(cols: Int, rows: Int) {
         
@@ -79,6 +106,7 @@ class BoardNode: SKNode{
     
     func buildGrid(){
         tilesLayer.removeAllChildren()
+        moveHistory.removeAll()
         
         for row in 0..<rows{
             for col in 0..<cols{
@@ -193,36 +221,47 @@ class BoardNode: SKNode{
     }*/
     
     func beginDrag(at point: CGPoint){
-        guard let found = piece(at: point) else { return }
+        guard let found = piece(at: point) as? PieceNode else { return }
+        
+        let pieceType = found.type
+        guard pieceType.owner == currentPlayer else {
+            return
+        }
+        
+        
         draggedPiece = found
         isDragging = true
         found.zPosition = Z.pieces + 1
 
         // NEW: only if it's our PieceNode, ask it for moves
-        if let p = found as? PieceNode {
-            // 1) remember start
-            let start = p.currentSquare
-            dragStartSquare = Square(col: start.col, row: start.row)
+        /*if let p = found as? PieceNode {
 
-            // 2) get raw [[row,col]] from behaviour
-            let raw = p.legalMoves()
-
-            // 3) map/filter to board Squares
-            let mapped = raw.compactMap { arr -> Square? in
-                guard arr.count == 2 else { return nil }
-                let r = arr[0], c = arr[1]
-                return isInsideBoard(col: c, row: r) ? Square(col: c, row: r) : nil
-            }
-
-            legalTargets = Set(mapped)
-
-            // 4) highlight
-            showHighlights(legalTargets)
+            
+            
         } else {
             legalTargets.removeAll()
             clearHighlights()
             dragStartSquare = nil
+        }*/
+        
+        // 1) remember start
+        let start = found.currentSquare
+        dragStartSquare = Square(col: start.col, row: start.row)
+
+        // 2) get raw [[row,col]] from behaviour
+        let raw = found.legalMoves()
+
+        // 3) map/filter to board Squares
+        let mapped = raw.compactMap { arr -> Square? in
+            guard arr.count == 2 else { return nil }
+            let r = arr[0], c = arr[1]
+            return isInsideBoard(col: c, row: r) ? Square(col: c, row: r) : nil
         }
+
+        legalTargets = Set(mapped)
+
+        // 4) highlight
+        showHighlights(legalTargets)
     }
 
     
@@ -278,7 +317,7 @@ class BoardNode: SKNode{
         if legalTargets.contains(dropSquare) {
             final = dropSquare
             
-            
+            var capturedPiece: PieceTypes? = nil
             
             if let start = dragStartSquare,
                let piece = node as? PieceNode {
@@ -288,10 +327,17 @@ class BoardNode: SKNode{
                         
                         let victimSquare = Square(col: final.col, row: final.row)
                         occupancy[victimSquare] = nil
+                        capturedPiece = victim.type
+                        
+                        
                     }
                 }
                 
                 updatePiecePosition(piece, from: start, to: final)
+                
+                let move = Move(player: currentPlayer, from: start, to: final, movedPiece: piece, capturedPiece: capturedPiece)
+                
+                moveHistory.append(move)
             }
             
             
@@ -394,6 +440,327 @@ class BoardNode: SKNode{
         }
         
         return false
+    }
+    
+    func isSafeForKing(col: Int, row: Int, pieceName: String) -> Bool{
+        
+        var i = row+1
+        var j = col+1
+        var isFirstTime = true
+        var isStartBottom: Bool {
+            if pieceName.contains("0"){
+               return true
+            } else {
+                return false
+            }
+        }
+        
+        var isWhiteKing: Bool {
+            if pieceName.contains("white"){
+                return true
+            } else {
+                return false
+            }
+        }
+        
+        //top-right
+        while i < 8 && j < 8 {
+            if isOccupied(col: j, row: i) && isEnemy(pieceName: pieceName, col: j, row: i){
+                let square = Square(col: j, row: i)
+                let enemyPiece = occupancy[square]
+                
+                if isWhiteKing {
+                    if isFirstTime && isStartBottom && enemyPiece?.type == .black_pawn {
+                        return false
+                    }
+                    if isFirstTime && enemyPiece?.type == .black_king {
+                        return false
+                    }
+                    if enemyPiece?.type == .black_bishop || enemyPiece?.type == .black_queen {
+                        return false
+                    }
+                } else {
+                    if isFirstTime && isStartBottom && enemyPiece?.type == .white_pawn {
+                        return false
+                    }
+                    
+                    if isFirstTime && enemyPiece?.type == .white_king {
+                        return false
+                    }
+                    
+                    if enemyPiece?.type == .white_bishop || enemyPiece?.type == .white_queen {
+                        return false
+                    }
+                }
+            }
+            i+=1
+            j+=1
+            isFirstTime = false
+        }
+        
+        i=row-1
+        j=col-1
+        isFirstTime = true
+        
+        //bottom-left
+        while i >= 0 && j >= 0 {
+            if isOccupied(col: j, row: i) && isEnemy(pieceName: pieceName, col: j, row: i){
+                let square = Square(col: j, row: i)
+                let enemyPiece = occupancy[square]
+                
+                if isWhiteKing {
+                    if isFirstTime && !isStartBottom && enemyPiece?.type == .black_pawn{
+                        return false
+                    }
+                    
+                    if isFirstTime && enemyPiece?.type == .black_king {
+                        return false
+                    }
+                    
+                    if enemyPiece?.type == .black_bishop || enemyPiece?.type == .black_queen {
+                        return false
+                    }
+                } else {
+                    if isFirstTime && !isStartBottom && enemyPiece?.type == .white_pawn{
+                        return false
+                    }
+                    
+                    if isFirstTime && enemyPiece?.type == .white_king {
+                        return false
+                    }
+                    
+                    if enemyPiece?.type == .white_bishop || enemyPiece?.type == .white_queen {
+                        return false
+                    }
+                }
+            }
+            
+            i-=1
+            j-=1
+            isFirstTime = false
+        }
+        
+        i=row-1
+        j=col+1
+        isFirstTime = true
+        
+        //bottom-right
+        while i >= 0 && j < 8 {
+            if isOccupied(col: j, row: i) && isEnemy(pieceName: pieceName, col: j, row: i){
+                let square = Square(col: j, row: i)
+                let enemyPiece = occupancy[square]
+                
+                if isWhiteKing {
+                    if isFirstTime && !isStartBottom && enemyPiece?.type == .black_pawn{
+                        return false
+                    }
+                    
+                    if isFirstTime && enemyPiece?.type == .black_king {
+                        return false
+                    }
+                    
+                    if enemyPiece?.type == .black_bishop || enemyPiece?.type == .black_queen {
+                        return false
+                    }
+                } else {
+                    if isFirstTime && !isStartBottom && enemyPiece?.type == .white_pawn{
+                        return false
+                    }
+                    
+                    if isFirstTime && enemyPiece?.type == .white_king {
+                        return false
+                    }
+                    
+                    if enemyPiece?.type == .white_bishop || enemyPiece?.type == .white_queen {
+                        return false
+                    }
+                }
+            }
+            
+            i-=1
+            j+=1
+            isFirstTime = false
+        }
+        
+        i=row+1
+        j=col-1
+        isFirstTime = true
+        
+        //top-left
+        while i < 8 && j >= 0 {
+            if isOccupied(col: j, row: i) && isEnemy(pieceName: pieceName, col: j, row: i){
+                let square = Square(col: j, row: i)
+                let enemyPiece = occupancy[square]
+                
+                if isWhiteKing {
+                    if isFirstTime && isStartBottom && enemyPiece?.type == .black_pawn {
+                        return false
+                    }
+                    
+                    if isFirstTime && enemyPiece?.type == .black_king {
+                        return false
+                    }
+                    
+                    if enemyPiece?.type == .black_bishop || enemyPiece?.type == .black_queen {
+                        return false
+                    }
+                } else {
+                    if isFirstTime && isStartBottom && enemyPiece?.type == .white_pawn {
+                        return false
+                    }
+                    
+                    if isFirstTime && enemyPiece?.type == .white_king {
+                        return false
+                    }
+                    
+                    if enemyPiece?.type == .white_bishop || enemyPiece?.type == .white_queen {
+                        return false
+                    }
+                }
+            }
+            
+            i+=1
+            j-=1
+            isFirstTime = false
+        }
+        
+        
+        //check for rook and wueen
+        
+        
+        i=row+1
+        j=col
+        isFirstTime = true
+        
+        //top
+        while i < 8 {
+            if isOccupied(col: j, row: i) && isEnemy(pieceName: pieceName, col: j, row: i){
+                let square = Square(col: j, row: i)
+                let enemyPiece = occupancy[square]
+                
+                if isWhiteKing {
+                    if isFirstTime && enemyPiece?.type == .black_king{
+                        return false
+                    }
+                    
+                    if enemyPiece?.type == .black_rook || enemyPiece?.type == .black_queen {
+                        return false
+                    }
+                } else {
+                    if isFirstTime && enemyPiece?.type == .white_king{
+                        return false
+                    }
+                    
+                    if enemyPiece?.type == .white_rook || enemyPiece?.type == .white_queen {
+                        return false
+                    }
+                }
+            }
+            
+            i+=1
+            isFirstTime = false
+        }
+        
+        i=row-1
+        j=col
+        isFirstTime=true
+        
+        //bottom
+        while i >= 0{
+            if isOccupied(col: j, row: i) && isEnemy(pieceName: pieceName, col: j, row: i){
+                let square = Square(col: j, row: i)
+                let enemyPiece = occupancy[square]
+                
+                if isWhiteKing {
+                    if isFirstTime && enemyPiece?.type == .black_king{
+                        return false
+                    }
+                    
+                    if enemyPiece?.type == .black_rook || enemyPiece?.type == .black_queen {
+                        return false
+                    }
+                } else {
+                    if isFirstTime && enemyPiece?.type == .white_king{
+                        return false
+                    }
+                    
+                    if enemyPiece?.type == .white_rook || enemyPiece?.type == .white_queen {
+                        return false
+                    }
+                }
+            }
+            
+            i-=1
+            isFirstTime = false
+        }
+        
+        i=row
+        j=col+1
+        isFirstTime=true
+        
+        //right
+        while j < 8 {
+            if isOccupied(col: j, row: i) && isEnemy(pieceName: pieceName, col: j, row: i){
+                let square = Square(col: j, row: i)
+                let enemyPiece = occupancy[square]
+                
+                if isWhiteKing {
+                    if isFirstTime && enemyPiece?.type == .black_king{
+                        return false
+                    }
+                    
+                    if enemyPiece?.type == .black_rook || enemyPiece?.type == .black_queen {
+                        return false
+                    }
+                } else {
+                    if isFirstTime && enemyPiece?.type == .white_king{
+                        return false
+                    }
+                    
+                    if enemyPiece?.type == .white_rook || enemyPiece?.type == .white_queen {
+                        return false
+                    }
+                }
+            }
+            
+            j+=1
+            isFirstTime = false
+        }
+        
+        i=row
+        j=col-1
+        isFirstTime=true
+        
+        //left
+        while j >= 0 {
+            if isOccupied(col: j, row: i) && isEnemy(pieceName: pieceName, col: j, row: i){
+                let square = Square(col: j, row: i)
+                let enemyPiece = occupancy[square]
+                
+                if isWhiteKing {
+                    if isFirstTime && enemyPiece?.type == .black_king{
+                        return false
+                    }
+                    
+                    if enemyPiece?.type == .black_rook || enemyPiece?.type == .black_queen {
+                        return false
+                    }
+                } else {
+                    if isFirstTime && enemyPiece?.type == .white_king{
+                        return false
+                    }
+                    
+                    if enemyPiece?.type == .white_rook || enemyPiece?.type == .white_queen {
+                        return false
+                    }
+                }
+            }
+            
+            j-=1
+            isFirstTime = false
+        }
+        
+        return true
     }
     
 }

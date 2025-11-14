@@ -18,7 +18,7 @@ class PieceNode : SKSpriteNode {
     
     private(set) var row : Int
     
-    private var type : PieceTypes
+    private(set) var type : PieceTypes
     
     private var behaviour: Movement
     

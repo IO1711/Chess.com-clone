@@ -13,6 +13,15 @@ class PiecesLogic {
         var availableTiles: [[Int]] = []
         
         if Int(pieceName.suffix(1))! < 3 && row < 2 {
+            
+            if board.isOccupied(col: col+1, row: row+1) && board.isEnemy(pieceName: pieceName, col: col+1, row: row+1){
+                availableTiles.append([row+1, col+1])
+            }
+            
+            if board.isOccupied(col: col-1, row: row+1) && board.isEnemy(pieceName: pieceName, col: col-1, row: row+1){
+                availableTiles.append([row+1, col-1])
+            }
+            
             for i in row..<3 {
                 var accessTile : [Int] = []
                 
@@ -27,6 +36,15 @@ class PiecesLogic {
             }
         } else if Int(pieceName.suffix(1))! > 4 && row > 5 {
             var i = row
+            
+            if board.isOccupied(col: col+1, row: row-1) && board.isEnemy(pieceName: pieceName, col: col+1, row: row-1){
+                availableTiles.append([row-1, col+1])
+            }
+            
+            if board.isOccupied(col: col-1, row: row-1) && board.isEnemy(pieceName: pieceName, col: col-1, row: row-1){
+                availableTiles.append([row-1, col-1])
+            }
+            
             while i > 4 {
                 var accessTile : [Int] = []
                 
@@ -42,10 +60,28 @@ class PiecesLogic {
                 i-=1
             }
         } else if Int(pieceName.suffix(1))! < 3 && row > 1 {
+            
+            if board.isOccupied(col: col+1, row: row+1) && board.isEnemy(pieceName: pieceName, col: col+1, row: row+1){
+                availableTiles.append([row+1, col+1])
+            }
+            
+            if board.isOccupied(col: col-1, row: row+1) && board.isEnemy(pieceName: pieceName, col: col-1, row: row+1){
+                availableTiles.append([row+1, col-1])
+            }
+            
             if !board.isOccupied(col: col, row: row+1){
                 availableTiles.append([row+1,col])
             }
         } else if Int(pieceName.suffix(1))! > 4 && row < 6 {
+            
+            if board.isOccupied(col: col+1, row: row-1) && board.isEnemy(pieceName: pieceName, col: col+1, row: row-1){
+                availableTiles.append([row-1, col+1])
+            }
+            
+            if board.isOccupied(col: col-1, row: row-1) && board.isEnemy(pieceName: pieceName, col: col-1, row: row-1){
+                availableTiles.append([row-1, col-1])
+            }
+            
             if !board.isOccupied(col: col, row: row-1){
                 availableTiles.append([row-1, col])
             }
@@ -429,66 +465,98 @@ class PiecesLogic {
         
         if col < 7{
             if board.isOccupied(col: col+1, row: row) && board.isEnemy(pieceName: pieceName, col: col+1, row: row){
-                avaliableTiles.append([row, col+1])
+                if board.isSafeForKing(col: col+1, row: row, pieceName: pieceName){
+                    avaliableTiles.append([row, col+1])
+                }
             } else if !board.isOccupied(col: col+1, row: row){
-                avaliableTiles.append([row, col+1])
+                if board.isSafeForKing(col: col+1, row: row, pieceName: pieceName){
+                    avaliableTiles.append([row, col+1])
+                }
             }
             
         }
         
         if row < 7 {
             if board.isOccupied(col: col, row: row+1) && board.isEnemy(pieceName: pieceName, col: col, row: row+1){
-                avaliableTiles.append([row+1, col])
+                if board.isSafeForKing(col: col, row: row+1, pieceName: pieceName){
+                    avaliableTiles.append([row+1, col])
+                }
             } else if !board.isOccupied(col: col, row: row+1){
-                avaliableTiles.append([row+1, col])
+                if board.isSafeForKing(col: col, row: row+1, pieceName: pieceName){
+                    avaliableTiles.append([row+1, col])
+                }
             }
         }
         
         if row > 0 {
             if board.isOccupied(col: col, row: row-1) && board.isEnemy(pieceName: pieceName, col: col, row: row-1){
-                avaliableTiles.append([row-1, col])
+                if board.isSafeForKing(col: col, row: row-1, pieceName: pieceName){
+                    avaliableTiles.append([row-1, col])
+                }
             } else if !board.isOccupied(col: col, row: row-1){
-                avaliableTiles.append([row-1, col])
+                if board.isSafeForKing(col: col, row: row-1, pieceName: pieceName){
+                    avaliableTiles.append([row-1, col])
+                }
             }
         }
         
         if col > 0 {
             if board.isOccupied(col: col-1, row: row) && board.isEnemy(pieceName: pieceName, col: col-1, row: row){
-                avaliableTiles.append([row, col-1])
+                if board.isSafeForKing(col: col-1, row: row, pieceName: pieceName){
+                    avaliableTiles.append([row, col-1])
+                }
             } else if !board.isOccupied(col: col-1, row: row){
-                avaliableTiles.append([row, col-1])
+                if board.isSafeForKing(col: col-1, row: row, pieceName: pieceName){
+                    avaliableTiles.append([row, col-1])
+                }
             }
         }
         
         if row > 0 && col > 0 {
             if board.isOccupied(col: col-1, row: row-1) && board.isEnemy(pieceName: pieceName, col: col-1, row: row-1){
-                avaliableTiles.append([row-1, col-1])
+                if board.isSafeForKing(col: col-1, row: row-1, pieceName: pieceName){
+                    avaliableTiles.append([row-1, col-1])
+                }
             } else if !board.isOccupied(col: col-1, row: row-1){
-                avaliableTiles.append([row-1, col-1])
+                if board.isSafeForKing(col: col-1, row: row-1, pieceName: pieceName){
+                    avaliableTiles.append([row-1, col-1])
+                }
             }
         }
         
         if row < 7 && col < 7 {
             if board.isOccupied(col: col+1, row: row+1) && board.isEnemy(pieceName: pieceName, col: col+1, row: row+1){
-                avaliableTiles.append([row+1, col+1])
+                if board.isSafeForKing(col: col+1, row: row+1, pieceName: pieceName){
+                    avaliableTiles.append([row+1, col+1])
+                }
             } else if !board.isOccupied(col: col+1, row: row+1){
-                avaliableTiles.append([row+1, col+1])
+                if board.isSafeForKing(col: col+1, row: row+1, pieceName: pieceName){
+                    avaliableTiles.append([row+1, col+1])
+                }
             }
         }
         
         if row < 7 && col > 0 {
             if board.isOccupied(col: col-1, row: row+1) && board.isEnemy(pieceName: pieceName, col: col-1, row: row+1){
-                avaliableTiles.append([row+1, col-1])
+                if board.isSafeForKing(col: col-1, row: row+1, pieceName: pieceName){
+                    avaliableTiles.append([row+1, col-1])
+                }
             } else if !board.isOccupied(col: col-1, row: row+1){
-                avaliableTiles.append([row+1, col-1])
+                if board.isSafeForKing(col: col-1, row: row+1, pieceName: pieceName){
+                    avaliableTiles.append([row+1, col-1])
+                }
             }
         }
         
         if row > 0 && col < 7 {
             if board.isOccupied(col: col+1, row: row-1) && board.isEnemy(pieceName: pieceName, col: col+1, row: row-1){
-                avaliableTiles.append([row-1, col+1])
+                if board.isSafeForKing(col: col+1, row: row-1, pieceName: pieceName){
+                    avaliableTiles.append([row-1, col+1])
+                }
             } else if !board.isOccupied(col: col+1, row: row-1){
-                avaliableTiles.append([row-1, col+1])
+                if board.isSafeForKing(col: col+1, row: row-1, pieceName: pieceName){
+                    avaliableTiles.append([row-1, col+1])
+                }
             }
         }
         
