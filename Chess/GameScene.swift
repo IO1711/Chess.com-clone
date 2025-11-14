@@ -41,8 +41,31 @@ class GameScene: SKScene {
         board.layout(in: frame)
         board.buildGrid()
         
-        board.addPiece(pieceType: .black_bishop, col: 2, row: 3)
-        board.addPiece(pieceType: .white_bishop, col: 4, row: 0)
+        //whites
+        for i in 0...7 {
+            board.addPiece(pieceType: .white_pawn, col: i, row: 1)
+        }
+        board.addPiece(pieceType: .white_rook, col: 0, row: 0)
+        board.addPiece(pieceType: .white_rook, col: 7, row: 0)
+        board.addPiece(pieceType: .white_bishop, col: 2, row: 0)
+        board.addPiece(pieceType: .white_bishop, col: 5, row: 0)
+        board.addPiece(pieceType: .white_knight, col: 1, row: 0)
+        board.addPiece(pieceType: .white_knight, col: 6, row: 0)
+        board.addPiece(pieceType: .white_queen, col: 3, row: 0)
+        board.addPiece(pieceType: .white_king, col: 4, row: 0)
+        
+        for i in 0...7 {
+            board.addPiece(pieceType: .black_pawn, col: i, row: 6)
+        }
+        board.addPiece(pieceType: .black_rook, col: 7, row: 7)
+        board.addPiece(pieceType: .black_rook, col: 0, row: 7)
+        board.addPiece(pieceType: .black_knight, col: 1, row: 7)
+        board.addPiece(pieceType: .black_knight, col: 6, row: 7)
+        board.addPiece(pieceType: .black_bishop, col: 2, row: 7)
+        board.addPiece(pieceType: .black_bishop, col: 5, row: 7)
+        board.addPiece(pieceType: .black_queen, col: 3, row: 7)
+        board.addPiece(pieceType: .black_king, col: 4, row: 7)
+        
     }
 
 
