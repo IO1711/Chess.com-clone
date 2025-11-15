@@ -463,6 +463,7 @@ class PiecesLogic {
     static func king(row: Int, col: Int, pieceName: String, board: BoardNode)->[[Int]]{
         var avaliableTiles: [[Int]] = []
         
+        //right
         if col < 7{
             if board.isOccupied(col: col+1, row: row) && board.isEnemy(pieceName: pieceName, col: col+1, row: row){
                 if board.isSafeForKing(col: col+1, row: row, pieceName: pieceName){
@@ -476,6 +477,7 @@ class PiecesLogic {
             
         }
         
+        //top
         if row < 7 {
             if board.isOccupied(col: col, row: row+1) && board.isEnemy(pieceName: pieceName, col: col, row: row+1){
                 if board.isSafeForKing(col: col, row: row+1, pieceName: pieceName){
@@ -488,6 +490,7 @@ class PiecesLogic {
             }
         }
         
+        //bottom
         if row > 0 {
             if board.isOccupied(col: col, row: row-1) && board.isEnemy(pieceName: pieceName, col: col, row: row-1){
                 if board.isSafeForKing(col: col, row: row-1, pieceName: pieceName){
@@ -500,6 +503,7 @@ class PiecesLogic {
             }
         }
         
+        //left
         if col > 0 {
             if board.isOccupied(col: col-1, row: row) && board.isEnemy(pieceName: pieceName, col: col-1, row: row){
                 if board.isSafeForKing(col: col-1, row: row, pieceName: pieceName){
@@ -512,6 +516,7 @@ class PiecesLogic {
             }
         }
         
+        //bottom-left
         if row > 0 && col > 0 {
             if board.isOccupied(col: col-1, row: row-1) && board.isEnemy(pieceName: pieceName, col: col-1, row: row-1){
                 if board.isSafeForKing(col: col-1, row: row-1, pieceName: pieceName){
@@ -524,6 +529,7 @@ class PiecesLogic {
             }
         }
         
+        //top-right
         if row < 7 && col < 7 {
             if board.isOccupied(col: col+1, row: row+1) && board.isEnemy(pieceName: pieceName, col: col+1, row: row+1){
                 if board.isSafeForKing(col: col+1, row: row+1, pieceName: pieceName){
@@ -536,6 +542,7 @@ class PiecesLogic {
             }
         }
         
+        //top-left
         if row < 7 && col > 0 {
             if board.isOccupied(col: col-1, row: row+1) && board.isEnemy(pieceName: pieceName, col: col-1, row: row+1){
                 if board.isSafeForKing(col: col-1, row: row+1, pieceName: pieceName){
@@ -548,6 +555,7 @@ class PiecesLogic {
             }
         }
         
+        //bottom-right
         if row > 0 && col < 7 {
             if board.isOccupied(col: col+1, row: row-1) && board.isEnemy(pieceName: pieceName, col: col+1, row: row-1){
                 if board.isSafeForKing(col: col+1, row: row-1, pieceName: pieceName){

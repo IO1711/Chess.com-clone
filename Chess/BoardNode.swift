@@ -76,6 +76,9 @@ class BoardNode: SKNode{
         return (moveHistory.count % 2==0) ? .white : .black
     }
     
+    private var isCheck: Bool = false
+    private var isCheckmate: Bool = false
+    
     init(cols: Int, rows: Int) {
         
         self.cols = cols
@@ -463,6 +466,8 @@ class BoardNode: SKNode{
             }
         }
         
+        var isOppositeSafe: Bool = true
+        
         //check for bishop, pawn, king and queen
         
         //top-right
@@ -482,6 +487,7 @@ class BoardNode: SKNode{
                         return false
                     }
                     if enemyPiece?.type == .black_bishop || enemyPiece?.type == .black_queen {
+                        
                         return false
                     }
                 } else {
