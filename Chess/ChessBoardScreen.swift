@@ -18,10 +18,17 @@ struct ChessBoardScreen: View {
 
     // 2) show it with SpriteView
     var body: some View {
-        SpriteView(scene: scene)
-            .ignoresSafeArea()   // or give it padding if you want UI around it
+        ZStack {
+            // Full-screen black background so no gray shows anywhere
+            Color.black
+                .ignoresSafeArea()
+
+            SpriteView(scene: scene)
+                .ignoresSafeArea()
+        }
     }
 }
+
 
 
 #Preview {

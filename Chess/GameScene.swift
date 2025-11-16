@@ -40,6 +40,7 @@ class GameScene: SKScene {
         addChild(board)
         board.layout(in: frame)
         board.buildGrid()
+        board.buildSides()
         
         //whites
         for i in 0...7 {
@@ -70,7 +71,7 @@ class GameScene: SKScene {
 
 
     override func didMove(to view: SKView) {
-        backgroundColor = .systemTeal
+        backgroundColor = SKColor(red: 38/255, green: 39/255, blue: 41/255, alpha: 1)
         
         buildBoard()
         

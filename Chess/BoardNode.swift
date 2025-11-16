@@ -107,6 +107,38 @@ class BoardNode: SKNode{
         print(boardSize > 0)
     }
     
+    func buildSides(){
+        
+        let textureWhite = SKTexture(imageNamed: "white_pawn")
+        let textureBlack = SKTexture(imageNamed: "black_pawn")
+        
+        let picWhite = SKSpriteNode(texture: textureWhite, color: .clear, size: CGSize(width: tileSize, height: tileSize))
+        let picBlack = SKSpriteNode(texture: textureBlack, color: .clear, size: CGSize(width: tileSize, height: tileSize))
+        
+        picWhite.position = CGPoint(x: origin.x + 50, y: origin.y - 100)
+        picBlack.position = CGPoint(x: origin.x + 50, y: origin.y + CGFloat(8)*tileSize + 100)
+        
+        let labelWhite = SKLabelNode(text: "White")
+        let labelBlack = SKLabelNode(text: "Black")
+        
+        labelWhite.fontColor = SKColor(red: 187/255, green: 188/255, blue: 191/255, alpha: 1)
+        labelBlack.fontColor = SKColor(red: 187/255, green: 188/255, blue: 191/255, alpha: 1)
+        
+        labelWhite.position = CGPoint(x: origin.x + 100, y: origin.y - 119)
+        labelBlack.position = CGPoint(x: origin.x + 100, y: origin.y + CGFloat(8)*tileSize + 82)
+        
+        labelWhite.fontSize = 24
+        labelBlack.fontSize = 24
+        
+        
+        addChild(picWhite)
+        addChild(picBlack)
+        
+        addChild(labelWhite)
+        addChild(labelBlack)
+        
+    }
+    
     func buildGrid(){
         tilesLayer.removeAllChildren()
         moveHistory.removeAll()
