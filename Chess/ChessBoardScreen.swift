@@ -9,17 +9,18 @@ import SwiftUI
 import SpriteKit
 
 struct ChessBoardScreen: View {
-    // 1) create the scene for SwiftUI
+    
     private var scene: SKScene {
         let scene = GameScene(size: CGSize(width: 800, height: 800))
-        scene.scaleMode = .resizeFill   // important so it fills the view
+        scene.scaleMode = .resizeFill
         return scene
     }
+    
+    
 
-    // 2) show it with SpriteView
+    
     var body: some View {
         ZStack {
-            // Full-screen black background so no gray shows anywhere
             Color.black
                 .ignoresSafeArea()
 
@@ -28,7 +29,7 @@ struct ChessBoardScreen: View {
         }
     }
 }
-
+//world's best code is down somewhere
 
 
 #Preview {

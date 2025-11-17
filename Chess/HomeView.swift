@@ -249,6 +249,13 @@ struct HomeView: View {
                 NavigationLink {
                     ChessBoardScreen()
                         .navigationBarBackButtonHidden(false) // if you want no bar on board
+                        .toolbar{
+                            ToolbarItem(placement: .principal){
+                                Image("icon")
+                                    .resizable()
+                                    .frame(width: 130, height: 40)
+                            }
+                        }
                 } label: {
                     Text("Play")
                         .font(.title2.bold())

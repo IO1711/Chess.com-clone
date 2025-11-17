@@ -22,6 +22,9 @@ class PieceNode : SKSpriteNode {
     
     private var behaviour: Movement
     
+    //some incredibly interesting code
+    
+    
     init(col: Int, row: Int, type: PieceTypes, tileSize: CGFloat, origin: CGPoint, behaviour: Movement? = nil, board: BoardNode) {
         
         let x = origin.x + CGFloat(col) * tileSize + tileSize/2
